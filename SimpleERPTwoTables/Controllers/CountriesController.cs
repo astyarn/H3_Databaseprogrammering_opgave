@@ -66,12 +66,14 @@ namespace SimpleERPTwoTables.Controllers
         // PUT: api/Countries/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCountry(int id, Country country)
+        public async Task<IActionResult> PutCountry(int id, CountryForUpdateDTO countryDTO)
         {
-            if (id != country.CountryId)
+            if (id != countryDTO.CountryId)
             {
                 return BadRequest();
             }
+
+            var country = countryDTO.Adapt<Country>();  
 
             _context.Entry(country).State = EntityState.Modified;
 
@@ -97,16 +99,21 @@ namespace SimpleERPTwoTables.Controllers
         // POST: api/Countries
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Country>> PostCountry(Country country)
+        public async Task<ActionResult<CountryForSaveDTO>> PostCountry(CountryForSaveDTO country)
         {
-          if (_context.Countries == null)
-          {
-              return Problem("Entity set 'DatabaseContext.Countries'  is null.");
-          }
-            _context.Countries.Add(country);
+            if (_context.Countries == null)
+            {
+                return Problem("Entity set 'DatabaseContext.Countries'  is null.");
+            }
+
+            Country CountryObjekt = new Country();
+            CountryObjekt = country.Adapt<Country>();
+
+            _context.Countries.Add(CountryObjekt);
+
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCountry", new { id = country.CountryId }, country);
+            return CreatedAtAction("GetCountry", new { id = CountryObjekt.CountryId }, country);
         }
 
         // DELETE: api/Countries/5
