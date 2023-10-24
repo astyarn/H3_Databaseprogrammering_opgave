@@ -11,5 +11,7 @@ namespace SimpleERPTwoTables.Models
 
         public DbSet<Country> Countries { get; set; } = null!;
         public DbSet<City> Cities { get; set; } = null!;    
+        public DbSet<Language> Languages { get; set; } = null!;    
+        public DbSet<CityLanguage> CityLanguages { get; set; } = null!;    
     }
 }
