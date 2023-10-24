@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SimpleERPTwoTables.DTO;
 using SimpleERPTwoTables.Models;
 
 namespace SimpleERPTwoTables.Controllers
@@ -22,13 +24,23 @@ namespace SimpleERPTwoTables.Controllers
 
         // GET: api/Countries
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Country>>> GetCountries()
+        public async Task<ActionResult<IEnumerable<CountryDTO>>> GetCountries()
         {
-          if (_context.Countries == null)
-          {
-              return NotFound();
-          }
-            return await _context.Countries.Include(c => c.Cities).ToListAsync();
+            List<Country> CountryList = new List<Country>();    
+
+            if (_context.Countries == null)
+            {
+                return NotFound();
+            }
+            //return await _context.Countries.Include(c => c.Cities).ToListAsync();
+
+            CountryList = await _context.Countries.Include(c => c.Cities).ToListAsync();
+            
+            List<CountryDTO> CountriesDTOList = new List<CountryDTO>();
+
+            CountriesDTOList = CountryList.Adapt<CountryDTO[]>().ToList();
+
+            return Ok(CountriesDTOList);
         }
 
         // GET: api/Countries/5
