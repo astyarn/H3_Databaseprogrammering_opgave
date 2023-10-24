@@ -36,6 +36,7 @@ namespace SimpleERPTwoTables.Controllers
             //return await _context.Cities.ToListAsync();
             //return await _context.Cities.Include(c => c.Country).ToListAsync();
 
+            //CityList = await _context.Cities.ToListAsync(); 
             CityList = await _context.Cities.Include(c => c.Country).ToListAsync();
 
             List<CityDTO> CityDTOList = new List<CityDTO>();
@@ -48,20 +49,22 @@ namespace SimpleERPTwoTables.Controllers
 
         // GET: api/Cities/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<City>> GetCity(int id)
+        public async Task<ActionResult<CityDTO>> GetCity(int id)
         {
             if (_context.Cities == null)
             {
                 return NotFound();
             }
-            var city = await _context.Cities.FindAsync(id);
+            var city = await _context.Cities.Include(c => c.Country).FirstOrDefaultAsync(c => c.CityId == id);
 
             if (city == null)
             {
                 return NotFound();
             }
 
-            return city;
+            CityDTO CityDTOObject = city.Adapt<CityDTO>();
+
+            return Ok(CityDTOObject);
         }
 
         // PUT: api/Cities/5
