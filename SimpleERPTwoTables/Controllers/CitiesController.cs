@@ -50,10 +50,10 @@ namespace SimpleERPTwoTables.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<City>> GetCity(int id)
         {
-          if (_context.Cities == null)
-          {
-              return NotFound();
-          }
+            if (_context.Cities == null)
+            {
+                return NotFound();
+            }
             var city = await _context.Cities.FindAsync(id);
 
             if (city == null)
@@ -98,16 +98,21 @@ namespace SimpleERPTwoTables.Controllers
         // POST: api/Cities
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<City>> PostCity(City city)
+        public async Task<ActionResult<CityForSaveDTO>> PostCity(CityForSaveDTO city)
         {
-          if (_context.Cities == null)
-          {
-              return Problem("Entity set 'DatabaseContext.Cities'  is null.");
-          }
-            _context.Cities.Add(city);
+            if (_context.Cities == null)
+            {
+                return Problem("Entity set 'DatabaseContext.Cities'  is null.");
+            }
+
+            City CityObject = new City();
+            CityObject = city.Adapt<City>();
+
+            _context.Cities.Add(CityObject);
+
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCity", new { id = city.CityId }, city);
+            return CreatedAtAction("GetCity", new { id = CityObject.CityId }, city);
         }
 
         // DELETE: api/Cities/5
