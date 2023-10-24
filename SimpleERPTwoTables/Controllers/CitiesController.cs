@@ -70,12 +70,14 @@ namespace SimpleERPTwoTables.Controllers
         // PUT: api/Cities/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCity(int id, City city)
+        public async Task<IActionResult> PutCity(int id, CityForUpdateDTO cityDTO)
         {
-            if (id != city.CityId)
+            if (id != cityDTO.CityId)
             {
                 return BadRequest();
             }
+
+            var city = cityDTO.Adapt<City>();   
 
             _context.Entry(city).State = EntityState.Modified;
 
