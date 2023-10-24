@@ -45,20 +45,22 @@ namespace SimpleERPTwoTables.Controllers
 
         // GET: api/Countries/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Country>> GetCountry(int id)
+        public async Task<ActionResult<CountryDTO>> GetCountry(int id)
         {
-          if (_context.Countries == null)
-          {
-              return NotFound();
-          }
-            var country = await _context.Countries.FindAsync(id);
+            if (_context.Countries == null)
+            {
+                return NotFound();
+            }
+            var country = await _context.Countries.Include(c => c.Cities).FirstOrDefaultAsync(c => c.CountryId == id);
 
             if (country == null)
             {
                 return NotFound();
             }
 
-            return country;
+            CountryDTO CountryDTOObject = country.Adapt<CountryDTO>();
+
+            return Ok(CountryDTOObject);
         }
 
         // PUT: api/Countries/5
