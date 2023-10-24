@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SimpleERPTwoTables.DTO;
 using SimpleERPTwoTables.Models;
+
+using Mapster;
 
 namespace SimpleERPTwoTables.Controllers
 {
@@ -22,14 +25,25 @@ namespace SimpleERPTwoTables.Controllers
 
         // GET: api/Cities
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<City>>> GetCities()
+        public async Task<ActionResult<IEnumerable<CityDTO>>> GetCities()
         {
-          if (_context.Cities == null)
-          {
-              return NotFound();
-          }
+            List<City> CityList = new List<City>();
+
+            if (_context.Cities == null)
+            {
+                return NotFound();
+            }
             //return await _context.Cities.ToListAsync();
-            return await _context.Cities.Include(c => c.Country).ToListAsync();
+            //return await _context.Cities.Include(c => c.Country).ToListAsync();
+
+            CityList = await _context.Cities.Include(c => c.Country).ToListAsync();
+
+            List<CityDTO> CityDTOList = new List<CityDTO>();
+            
+            //CityDTOList = CityList.Adapt(CityDTOList);
+            CityDTOList = CityList.Adapt<CityDTO[]>().ToList();
+
+            return Ok(CityDTOList);
         }
 
         // GET: api/Cities/5
@@ -119,6 +133,27 @@ namespace SimpleERPTwoTables.Controllers
         private bool CityExists(int id)
         {
             return (_context.Cities?.Any(e => e.CityId == id)).GetValueOrDefault();
+        }
+
+        private static CityDTO ItemToCity(City city, bool IncludeRelations = true)
+        {
+            CityDTO CityDTO_Object = new CityDTO();
+
+            CityDTO_Object.CityId = city.CityId;
+            CityDTO_Object.CityName = city.CityName;
+            CityDTO_Object.CityDescription = city.CityDescription;
+            CityDTO_Object.CountryId = city.CountryId;
+
+            if (IncludeRelations)
+            {
+                CityDTO_Object.Country = new CountryDTOMinusRelations();
+
+                CityDTO_Object.Country.CountryName = city.Country.CountryName;
+                CityDTO_Object.Country.CountryId = city.CountryId;
+            }
+
+            return CityDTO_Object;
+
         }
     }
 }
