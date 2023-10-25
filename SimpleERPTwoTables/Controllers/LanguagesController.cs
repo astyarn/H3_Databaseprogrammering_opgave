@@ -95,16 +95,21 @@ namespace SimpleERPTwoTables.Controllers
         // POST: api/Languages
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Language>> PostLanguage(Language language)
+        public async Task<ActionResult<LanguageForSaveDTO>> PostLanguage(LanguageForSaveDTO language)
         {
-          if (_context.Languages == null)
-          {
-              return Problem("Entity set 'DatabaseContext.Languages'  is null.");
-          }
-            _context.Languages.Add(language);
+            if (_context.Languages == null)
+            {
+                return Problem("Entity set 'DatabaseContext.Languages'  is null.");
+            }
+
+            Language languageObject;
+
+            languageObject = language.Adapt<Language>();
+
+            _context.Languages.Add(languageObject);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetLanguage", new { id = language.LanguageId }, language);
+            return CreatedAtAction("GetLanguage", new { id = languageObject.LanguageId }, language);
         }
 
         // DELETE: api/Languages/5
