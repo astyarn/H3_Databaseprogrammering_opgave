@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SimpleERPTwoTables.DTO;
 using SimpleERPTwoTables.Models;
 
 namespace SimpleERPTwoTables.Controllers
@@ -22,13 +24,23 @@ namespace SimpleERPTwoTables.Controllers
 
         // GET: api/Languages
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Language>>> GetLanguages()
+        public async Task<ActionResult<IEnumerable<LanguageDTO>>> GetLanguages()
         {
-          if (_context.Languages == null)
-          {
-              return NotFound();
-          }
-            return await _context.Languages.ToListAsync();
+            List<Language> LanguageList = new List<Language>();
+
+            if (_context.Languages == null)
+            {
+                return NotFound();
+            }
+
+            LanguageList = await _context.Languages.Include(c => c.CityLanguages).ThenInclude(c => c.City).ToListAsync();
+            //return await _context.Languages.ToListAsync();
+
+            List<LanguageDTO> LanguageDTOList = new List<LanguageDTO>();  
+
+            LanguageDTOList = LanguageList.Adapt<LanguageDTO[]>().ToList();
+
+            return Ok(LanguageDTOList);
         }
 
         // GET: api/Languages/5

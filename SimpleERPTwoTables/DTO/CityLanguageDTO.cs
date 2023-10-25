@@ -19,5 +19,8 @@
         public LanguageDTOMinusRelations Language { get; set; }
     }
 
-
+    public class CityLanguageDTOMinusLanguage : CityLanguageForSaveAndUpdateDTO
+    {
+        public CityDTOMinusRelations City { get; set; }
+    }
 }

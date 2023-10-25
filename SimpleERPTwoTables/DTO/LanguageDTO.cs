@@ -12,7 +12,8 @@
 
     public class LanguageDTO : LanguageForUpdateDTO
     {
-        public CityLanguageDTO CityLanguage { get; set; }
+        //public ICollection<CityLanguageDTO> CityLanguages { get; set; }
+        public ICollection<CityLanguageDTOMinusLanguage> CityLanguages { get; set; }
     }
 
     public class LanguageDTOMinusRelations : LanguageForUpdateDTO

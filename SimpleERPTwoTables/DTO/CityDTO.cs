@@ -17,6 +17,9 @@
     public class CityDTO : CityForUpdateDTO
     {
         public CountryDTOMinusRelations? Country { get; set; }
+
+        public ICollection<CityLanguageMinusCityDTO> CityLanguages { get; set; }
+               = new List<CityLanguageMinusCityDTO>();
     }
 
     public class CityDTOMinusRelations : CityForUpdateDTO

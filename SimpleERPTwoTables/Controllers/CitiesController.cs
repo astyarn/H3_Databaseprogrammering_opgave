@@ -37,7 +37,10 @@ namespace SimpleERPTwoTables.Controllers
             //return await _context.Cities.Include(c => c.Country).ToListAsync();
 
             //CityList = await _context.Cities.ToListAsync(); 
-            CityList = await _context.Cities.Include(c => c.Country).ToListAsync();
+            CityList = await _context.Cities.
+                Include(c => c.Country).
+                Include(c => c.CityLanguages).
+                ThenInclude(l => l.Language).ToListAsync();
 
             List<CityDTO> CityDTOList = new List<CityDTO>();
             
@@ -55,7 +58,11 @@ namespace SimpleERPTwoTables.Controllers
             {
                 return NotFound();
             }
-            var city = await _context.Cities.Include(c => c.Country).FirstOrDefaultAsync(c => c.CityId == id);
+            var city = await _context.Cities.
+                Include(c => c.Country).
+                Include(c => c.CityLanguages).
+                ThenInclude(l => l.Language).   
+                FirstOrDefaultAsync(c => c.CityId == id);
 
             if (city == null)
             {
