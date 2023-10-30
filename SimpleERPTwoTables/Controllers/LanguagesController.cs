@@ -64,12 +64,14 @@ namespace SimpleERPTwoTables.Controllers
         // PUT: api/Languages/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutLanguage(int id, Language language)
+        public async Task<IActionResult> PutLanguage(int id, LanguageForUpdateDTO languageDTO)
         {
-            if (id != language.LanguageId)
+            if (id != languageDTO.LanguageId)
             {
                 return BadRequest();
             }
+
+            var language = languageDTO.Adapt<Language>();
 
             _context.Entry(language).State = EntityState.Modified;
 
