@@ -51,12 +51,14 @@ namespace SimpleERPTwoTables.Controllers
           {
               return NotFound();
           }
-            var language = await _context.Languages.FindAsync(id);
+            var language = await _context.Languages.Include(c => c.CityLanguages).ThenInclude(c => c.City).FirstOrDefaultAsync(c => c.LanguageId == id);
 
             if (language == null)
             {
                 return NotFound();
             }
+
+            LanguageDTO LanguageDTOObject = language.Adapt<LanguageDTO>();
 
             return language;
         }
